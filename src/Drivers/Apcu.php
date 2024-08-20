@@ -51,7 +51,11 @@ class Apcu implements CacheInterface
      */
     public function delete(string $key): bool
     {
-        return apcu_delete($key);
+        if ($this->has($key)) {
+            return apcu_delete($key);
+        }
+
+        return false;
     }
 
     /**
