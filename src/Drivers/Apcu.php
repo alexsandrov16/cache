@@ -39,6 +39,10 @@ class Apcu implements CacheInterface
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
+        if ($this->has($key)) {
+            $this->delete($key);
+        }
+
         return apcu_store($key, $value, $ttl ?? $this->ttl);
     }
 
