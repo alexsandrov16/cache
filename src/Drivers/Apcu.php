@@ -3,6 +3,7 @@
 namespace Mk4U\Cache\Drivers;
 
 use Mk4U\Cache\Exceptions\CacheException;
+use Mk4U\Cache\Exceptions\InvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -11,7 +12,6 @@ use Psr\SimpleCache\CacheInterface;
 class Apcu implements CacheInterface
 {
     protected int $ttl = 300;
-    //protected ?string $prefix = null;
 
     public function __construct(array $config)
     {
@@ -20,7 +20,6 @@ class Apcu implements CacheInterface
         }
 
         $this->ttl = $config['ttl'] ?? $this->ttl;
-        //$this->prefix = $config['prefix'] ?? '';
     }
 
     /**
@@ -76,6 +75,8 @@ class Apcu implements CacheInterface
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
+        if (!is_array($keys)) throw new InvalidArgumentException('$keys is neither an array nor a Traversable');
+
         $values = [];
 
         foreach ($keys as $key) {
@@ -95,13 +96,15 @@ class Apcu implements CacheInterface
      */
     public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
+        if (!is_array($values)) throw new InvalidArgumentException('$values is neither an array nor a Traversable');
+
         $result = [];
 
         foreach ($values as $key => $value) {
             $result[] = $this->set($key, $value, $ttl);
         }
 
-        return in_array(false, $result) ? false : true;
+        return !in_array(false, $result);
     }
 
     /**
@@ -112,13 +115,15 @@ class Apcu implements CacheInterface
      */
     public function deleteMultiple(iterable $keys): bool
     {
+        if (!is_array($keys)) throw new InvalidArgumentException('$keys is neither an array nor a Traversable');
+
         $result = [];
 
         foreach ($keys as $key) {
             $result[] = $this->delete($key);
         }
 
-        return in_array(false, $result) ? false : true;
+        return !in_array(false, $result);
     }
 
     /**
@@ -126,6 +131,17 @@ class Apcu implements CacheInterface
      */
     public function has(string $key): bool
     {
+        $this->validateKey($key);
         return apcu_exists($key);
+    }
+
+    /**
+     * Validar $key
+     */
+    private function validateKey(string $key): void
+    {
+        if (empty($key) || preg_match('/^[A-Za-z0-9_.]+$/', $key)) {
+            throw new InvalidArgumentException("$key is not a legal value.");
+        }
     }
 }
