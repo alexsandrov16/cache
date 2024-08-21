@@ -3,20 +3,16 @@
 namespace Mk4U\Cache\Drivers;
 
 use Mk4U\Cache\Exceptions\CacheException;
+use Mk4U\Cache\Exceptions\InvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
 
 /**
- * undocumented class
+ * File class
  */
 class File implements CacheInterface
 {
     /** @param string $ext Extencion de los archivos de cache*/
     protected string $ext = 'cache';
-
-    /** @param string|null $namespace Espacio de nombre de los subdirecorios 
-     * donde se almacenaran los archivos de cache
-     */
-    protected ?string $namespace = null;
 
     /** @param string|null $cacheDir Directorio raiz donde se almacenara toda la cache*/
     protected ?string $cacheDir = null;
@@ -28,13 +24,10 @@ class File implements CacheInterface
     {
         //Establecer los parametros
         $this->ext = $config['ext'] ?? $this->ext;
-        $this->namespace = $config['namespace'] ?? '';
         $this->cacheDir = !empty($config['dir']) ? trim($config['dir'], '/') : dirname(__DIR__, 4) . '/cache';
         $this->ttl = $config['ttl'] ?? 300;
 
-        if (!is_dir($this->cacheDir) && !mkdir($this->cacheDir, 0775, true)) {
-            throw new CacheException("No permissions to create the directory {$this->cacheDir}");
-        }
+        $this->makeDir($this->cacheDir);
     }
 
     private function getCache(string $key): mixed
@@ -50,10 +43,14 @@ class File implements CacheInterface
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        if (is_null($cache = $this->getCache($key))) {
-            return $default;
+        if (!is_null($cache = $this->getCache($key))) {
+            if (!$this->isExpired($key)) {
+                return $cache['data'];
+            }
+            $this->delete($key);
         }
-        return $cache['data'];
+        
+        return $default;
     }
 
     /**
@@ -102,7 +99,22 @@ class File implements CacheInterface
      */
     public function clear(): bool
     {
-        return rmdir($this->cacheDir);
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator(
+                $this->cacheDir,
+                \RecursiveDirectoryIterator::SKIP_DOTS
+            ),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+        $result = [];
+        foreach ($iterator as $file) {
+            if ($file->isDir()) {
+                $result[] = rmdir($file->getPathname());
+            } else {
+                $result[] = unlink($file->getPathname());
+            }
+        }
+        return !in_array(false, $result);
     }
 
     /**
@@ -115,6 +127,8 @@ class File implements CacheInterface
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
+        if (!is_array($keys)) throw new InvalidArgumentException('$keys is neither an array nor a Traversable');
+
         $values = [];
 
         foreach ($keys as $key) {
@@ -133,6 +147,8 @@ class File implements CacheInterface
      */
     public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
+        if (!is_array($values)) throw new InvalidArgumentException('$values is neither an array nor a Traversable');
+
         $result = [];
 
         foreach ($values as $key => $value) {
@@ -149,6 +165,8 @@ class File implements CacheInterface
      */
     public function deleteMultiple(iterable $keys): bool
     {
+        if (!is_array($keys)) throw new InvalidArgumentException('$keys is neither an array nor a Traversable');
+
         $result = [];
 
         foreach ($keys as $key) {
@@ -162,16 +180,12 @@ class File implements CacheInterface
      */
     public function has(string $key): bool
     {
-        return file_exists($this->filePath($key));
-    }
+        $this->validateKey($key);
 
-    /**
-     * Establece el espaco de nombre o subdirectorio del archivo
-     */
-    public function setNamespace(string $namespace): CacheInterface
-    {
-        $this->namespace = $namespace;
-        return $this;
+        /*if ($this->isExpired($key)) {
+            $this->delete($key);
+        }*/
+        return file_exists($this->filePath($key));
     }
 
     /**
@@ -196,7 +210,27 @@ class File implements CacheInterface
      */
     private function filePath(string $name): string
     {
-        $subdir = trim($this->namespace, '/');
-        return "$this->cacheDir/$subdir/$name.$this->ext";
+        $ext = trim($this->ext, '.');
+        return "$this->cacheDir/$name.$ext";
+    }
+
+    /**
+     * Verifica si existe un directorio y lo crea
+     */
+    private function makeDir(string $dir): void
+    {
+        if (!is_dir($dir) && !mkdir($dir, 0775, true)) {
+            throw new CacheException("No permissions to create the directory {$dir}");
+        }
+    }
+
+    /**
+     * Validar $key
+     */
+    private function validateKey(string $key): void
+    {
+        if ($key=='' || !preg_match('/^[A-Za-z0-9_.]+$/', $key)) {
+            throw new InvalidArgumentException("$key is not a legal value.");
+        }
     }
 }
