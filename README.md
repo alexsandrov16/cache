@@ -1,4 +1,9 @@
 # Mk4U\Cache
+
+![GitHub Release](https://img.shields.io/github/v/release/alexsandrov16/cache?include_prereleases&style=flat-square&color=blue)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/alexsandrov16/cache?style=flat-square)
+![GitHub License](https://img.shields.io/github/license/alexsandrov16/cache?style=flat-square)
+
 A simple and flexible cache system for PHP.
 
 ## Features
