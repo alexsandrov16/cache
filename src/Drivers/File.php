@@ -219,8 +219,10 @@ class File implements CacheInterface
      */
     private function makeDir(string $dir): void
     {
-        if (!is_dir($dir) && !mkdir($dir, 0775, true)) {
-            throw new CacheException("No permissions to create the directory {$dir}");
+        if (!is_dir($dir)) {
+            if (!mkdir($dir, 0775, true)) {
+                throw new CacheException("No permissions to create the directory {$dir}");
+            }
         }
     }
 
