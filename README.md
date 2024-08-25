@@ -25,28 +25,19 @@ composer require mk4u/cache
 ### Configuration
 To use the library, you must first create an instance of the cache driver you want to use. The library includes a `Mk4U\Cache\CacheFactory` that makes it easy to create instances of the cache drivers.
 
-If no parameters are passed to the `Mk4U\Cache\CacheFactory`, an object of type `Mk4U\Cache\Drivers\File` will be created by default.
+> [!TIP] If no parameters are passed to the `Mk4U\Cache\CacheFactory::create()`, an object of type `Mk4U\Cache\Drivers\File` will be created by default.
 
-Example of use with the `Mk4U\Cache\Drivers\File` driver (default)
-```php
-require 'vendor/autoload.php';
+> [!NOTE] By default the `Mk4U\Cache\Drivers\File` object sets the following configuration parameters:
+> [
+>    //extension of cache files
+>    'ext' =>'cache',
+>    //directory where the cache will be stored, if it does not exist create it.
+>    'dir' => dirname(__DIR__, 4) . '/cache',
+>    //cache lifetime in seconds (default 5 minutes.)
+>    'ttl' => 300
+> ]
 
-// Create an instance of the file cache driver.
-$cache = Mk4U\Cache\CacheFactory::create();
-```
-By default the `Mk4U\Cache\Drivers\File` object sets the following configuration parameters:
-```php
-[
-    //extension of cache files
-    'ext' =>'cache',
-    //directory where the cache will be stored, if it does not exist create it.
-    'dir' => dirname(__DIR__, 4) . '/cache',
-    //cache lifetime in seconds (default 5 minutes.)
-    'ttl' => 300
-]
-```
-
-Example of use with the `Mk4U\Cache\Drivers\File` driver
+#### Example of use with the `Mk4U\Cache\Drivers\File` driver
 ```php
 require 'vendor/autoload.php';
 
@@ -60,8 +51,9 @@ $config = [
 // Create an instance of the file cache driver.
 $cache = Mk4U\Cache\CacheFactory::create('file', $config);
 ```
+> [!IMPORTANT] Make sure you set the necessary permissions for the creation of directories and cache files. 
 
-Example of use with `Mk4U\Cache\Drivers\Apcu` driver
+#### Example of use with `Mk4U\Cache\Drivers\Apcu` driver
 ```php
 require 'vendor/autoload.php';
 
