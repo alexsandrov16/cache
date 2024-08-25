@@ -25,9 +25,12 @@ composer require mk4u/cache
 ### Configuration
 To use the library, you must first create an instance of the cache driver you want to use. The library includes a `Mk4U\Cache\CacheFactory` that makes it easy to create instances of the cache drivers.
 
-> [!TIP] If no parameters are passed to the `Mk4U\Cache\CacheFactory::create()`, an object of type `Mk4U\Cache\Drivers\File` will be created by default.
+> [!TIP]
+> If no parameters are passed to the `Mk4U\Cache\CacheFactory::create()`, an object of type `Mk4U\Cache\Drivers\File` will be created by default.
 
-> [!NOTE] By default the `Mk4U\Cache\Drivers\File` object sets the following configuration parameters:
+> [!NOTE]
+> By default the `Mk4U\Cache\Drivers\File` object sets the following configuration parameters:
+>
 > [
 >    //extension of cache files
 >    'ext' =>'cache',
@@ -51,7 +54,8 @@ $config = [
 // Create an instance of the file cache driver.
 $cache = Mk4U\Cache\CacheFactory::create('file', $config);
 ```
-> [!IMPORTANT] Make sure you set the necessary permissions for the creation of directories and cache files. 
+> [!IMPORTANT]
+> Make sure you set the necessary permissions for the creation of directories and cache files. 
 
 #### Example of use with `Mk4U\Cache\Drivers\Apcu` driver
 ```php
