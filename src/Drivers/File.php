@@ -3,7 +3,7 @@
 namespace Mk4U\Cache\Drivers;
 
 use Mk4U\Cache\Exceptions\CacheException;
-use Mk4U\Cache\Exceptions\InvalidArgumentException;
+use Mk4U\Cache\HelperTrait;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -20,11 +20,13 @@ class File implements CacheInterface
     /** @param int|null $ttl Tiempo de vida de la cache*/
     protected ?int $ttl = null;
 
+    use HelperTrait;
+
     public function __construct(array $config)
     {
         //Establecer los parametros
         $this->ext = $config['ext'] ?? $this->ext;
-        $this->cacheDir = !empty($config['dir']) ? trim($config['dir'], '/') : dirname(__DIR__, 4) . '/cache';
+        $this->cacheDir = !empty($config['dir']) ? trim($config['dir'], '/') : 'cache';
         $this->ttl = $config['ttl'] ?? 300;
 
         $this->makeDir($this->cacheDir);
@@ -127,7 +129,7 @@ class File implements CacheInterface
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
-        if (!is_array($keys)) throw new InvalidArgumentException('$keys is neither an array nor a Traversable');
+        if (!is_array($keys)) throw new \InvalidArgumentException('$keys is neither an array nor a Traversable');
 
         $values = [];
 
@@ -147,7 +149,7 @@ class File implements CacheInterface
      */
     public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
-        if (!is_array($values)) throw new InvalidArgumentException('$values is neither an array nor a Traversable');
+        if (!is_array($values)) throw new \InvalidArgumentException('$values is neither an array nor a Traversable');
 
         $result = [];
 
@@ -165,7 +167,7 @@ class File implements CacheInterface
      */
     public function deleteMultiple(iterable $keys): bool
     {
-        if (!is_array($keys)) throw new InvalidArgumentException('$keys is neither an array nor a Traversable');
+        if (!is_array($keys)) throw new \InvalidArgumentException('$keys is neither an array nor a Traversable');
 
         $result = [];
 
@@ -223,16 +225,6 @@ class File implements CacheInterface
             if (!mkdir($dir, 0775, true)) {
                 throw new CacheException("No permissions to create the directory {$dir}");
             }
-        }
-    }
-
-    /**
-     * Validar $key
-     */
-    private function validateKey(string $key): void
-    {
-        if ($key=='' || !preg_match('/^[A-Za-z0-9_.]+$/', $key)) {
-            throw new InvalidArgumentException("$key is not a legal value.");
         }
     }
 }
