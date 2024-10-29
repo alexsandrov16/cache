@@ -35,7 +35,7 @@ By default the `Mk4U\Cache\Drivers\File` object sets the following configuration
     //extension of cache files
     'ext' =>'cache',
     //directory where the cache will be stored, if it does not exist create it.
-    'dir' => dirname(__DIR__, 4) . '/cache',
+    'dir' => '/cache',
     //cache lifetime in seconds (default 5 minutes.)
     'ttl' => 300
 ]
