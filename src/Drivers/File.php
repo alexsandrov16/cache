@@ -24,7 +24,7 @@ class File implements CacheInterface
     {
         //Establecer los parametros
         $this->ext = $config['ext'] ?? $this->ext;
-        $this->cacheDir = !empty($config['dir']) ? trim($config['dir'], '/') : dirname(__DIR__, 4) . '/cache';
+        $this->cacheDir = !empty($config['dir']) ? trim($config['dir'], '/') : 'cache';
         $this->ttl = $config['ttl'] ?? 300;
 
         $this->makeDir($this->cacheDir);
