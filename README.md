@@ -49,7 +49,7 @@ require 'vendor/autoload.php';
 // Cache driver configuration
 $config = [
     'ext' => 'txt', // Extension of cache files.
-    'dir' => '/dir/cache', // Directory where the cache will be stored
+    'dir' => __DIR__ . '/cache', // Directory where the cache will be stored
     'ttl' => 3600 // Cache lifetime in seconds.
 ];
 
