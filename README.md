@@ -31,14 +31,16 @@ To use the library, you must first create an instance of the cache driver you wa
 > [!NOTE]
 > By default the `Mk4U\Cache\Drivers\File` object sets the following configuration parameters:
 >
+> ```php
 > [
 >    //extension of cache files
 >    'ext' =>'cache',
 >    //directory where the cache will be stored, if it does not exist create it.
->    'dir' => dirname(__DIR__, 4) . '/cache',
+>    'dir' => '/cache',
 >    //cache lifetime in seconds (default 5 minutes.)
 >    'ttl' => 300
 > ]
+> ```
 
 #### Example of use with the `Mk4U\Cache\Drivers\File` driver
 ```php
@@ -47,7 +49,7 @@ require 'vendor/autoload.php';
 // Cache driver configuration
 $config = [
     'ext' => 'txt', // Extension of cache files.
-    'dir' => __DIR__ . '/cache', // Directory where the cache will be stored
+    'dir' => '/dir/cache', // Directory where the cache will be stored
     'ttl' => 3600 // Cache lifetime in seconds.
 ];
 
