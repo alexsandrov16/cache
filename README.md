@@ -13,7 +13,6 @@ A simple and flexible cache system for PHP.
 
 > [!IMPORTANT]
 > The file driver `Mk4U\Cache\Drivers\File` is suitable for storing small amounts of data in cache. However, as the number of records increases, performance may be affected due to the latency of disk I/O operations.
-
 > For applications that require storing large volumes of data or high performance, it is recommended to consider using in-memory cache drivers, such as APCu, <!--Redis, or Memcached,--> which are designed to handle large amounts of data more efficiently.
 
 ## Requirements
