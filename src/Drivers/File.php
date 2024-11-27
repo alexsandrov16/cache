@@ -29,7 +29,9 @@ class File implements CacheInterface
         $this->cacheDir = !empty($config['dir']) ? trim($config['dir'], '/') : 'cache';
         $this->ttl = $config['ttl'] ?? 300;
 
-        $this->makeDir($this->cacheDir);
+        if (!file_exists($this->cacheDir)) {
+            throw new \RuntimeException(sprintf("'%s' directory not found",$this->cacheDir));
+        }
     }
 
     private function getCache(string $key): mixed
