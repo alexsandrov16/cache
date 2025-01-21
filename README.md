@@ -165,4 +165,4 @@ Contributions are welcome. If you wish to contribute, please open an issue or a 
 This project is licensed under the [MIT License](https://github.com/alexsandrov16/cache?tab=MIT-1-ov-file).
 
 ## Contact
-If you have any questions or comments, feel free to contact me at [http://t.me/alexsadrov16](http://t.me/alexsadrov16)
+If you have any questions or comments, feel free to contact me at [Telegram](http://t.me/alexsadrov16).
