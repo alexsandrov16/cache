@@ -12,4 +12,12 @@ trait HelperTrait{
             throw new \InvalidArgumentException("$key is not a legal value.");
         }
     }
+
+    /**
+     * Hashea el key pasado
+     */
+    private function hashedKey(string $key) : string
+    {
+        return hash('sha256',$key);
+    }
 }

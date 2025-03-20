@@ -30,7 +30,7 @@ class File implements CacheInterface
         $this->ttl = $config['ttl'] ?? 300;
 
         if (!file_exists($this->cacheDir)) {
-            throw new \RuntimeException(sprintf("'%s' directory not found",$this->cacheDir));
+            throw new \RuntimeException(sprintf("'%s' directory not found", $this->cacheDir));
         }
     }
 
@@ -53,7 +53,7 @@ class File implements CacheInterface
             }
             $this->delete($key);
         }
-        
+
         return $default;
     }
 
@@ -184,28 +184,15 @@ class File implements CacheInterface
      */
     public function has(string $key): bool
     {
-        $this->validateKey($key);
-
-        /*if ($this->isExpired($key)) {
-            $this->delete($key);
-        }*/
         return file_exists($this->filePath($key));
     }
 
     /**
      * Verifica si expiro la cache
      */
-    public function isExpired(array|string $cache): bool
+    private function isExpired(string $key): bool
     {
-        $expire = null;
-        if (is_array($cache)) {
-            $expire = $cache;
-        }
-
-        if (is_string($cache)) {
-            $expire = $this->getCache($cache);
-        }
-
+        $expire = $this->getCache($key);
         return isset($expire) ? $expire['expire'] <= time() : true;
     }
 
@@ -214,19 +201,8 @@ class File implements CacheInterface
      */
     private function filePath(string $name): string
     {
+        $name = $this->hashedKey($name);
         $ext = trim($this->ext, '.');
         return "$this->cacheDir/$name.$ext";
-    }
-
-    /**
-     * Verifica si existe un directorio y lo crea
-     */
-    private function makeDir(string $dir): void
-    {
-        if (!is_dir($dir)) {
-            if (!mkdir($dir, 0775, true)) {
-                throw new CacheException("No permissions to create the directory {$dir}");
-            }
-        }
     }
 }

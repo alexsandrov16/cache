@@ -12,7 +12,7 @@ use Psr\SimpleCache\CacheInterface;
 class Apcu implements CacheInterface
 {
     protected int $ttl = 300;
-    
+
     use HelperTrait;
 
     public function __construct(array $config)
@@ -30,7 +30,7 @@ class Apcu implements CacheInterface
     public function get(string $key, mixed $default = null): mixed
     {
         if ($this->has($key)) {
-            return apcu_fetch($key);
+            return apcu_fetch($this->hashedKey($key));
         }
         return $default;
     }
@@ -44,7 +44,10 @@ class Apcu implements CacheInterface
             $this->delete($key);
         }
 
-        return apcu_store($key, $value, $ttl ?? $this->ttl);
+        return apcu_store(
+            $this->hashedKey($key),
+            $value,
+            $ttl ?? $this->ttl);
     }
 
     /**
@@ -53,7 +56,7 @@ class Apcu implements CacheInterface
     public function delete(string $key): bool
     {
         if ($this->has($key)) {
-            return apcu_delete($key);
+            return apcu_delete($this->hashedKey($key));
         }
 
         return false;
@@ -133,7 +136,6 @@ class Apcu implements CacheInterface
      */
     public function has(string $key): bool
     {
-        $this->validateKey($key);
-        return apcu_exists($key);
+        return apcu_exists($this->hashedKey($key));
     }
 }
