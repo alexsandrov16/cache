@@ -190,7 +190,7 @@ class File implements CacheInterface
     /**
      * Verifica si expiro la cache
      */
-    private function isExpired(string $key): bool
+    public function isExpired(string $key): bool
     {
         $expire = $this->getCache($key);
         return isset($expire) ? $expire['expire'] <= time() : true;
