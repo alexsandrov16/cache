@@ -125,6 +125,12 @@ return $cache->has('my_key'); //false
 $cache->clear();
 ```
 
+##### Cache is expired
+```php
+// Check if the cache has expired
+$cache->isExpired($key); //boolean
+```
+
 ###### Handling multiple values
 
 You can store, retrieve and delete multiple values from the cache using the setMultiple, getMultiple and deleteMultiple methods.
